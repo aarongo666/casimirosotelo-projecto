@@ -20,7 +20,7 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: #white;
+    background: white;
     color: var(--texto);
     line-height: 1.6;
     overflow-x: hidden;
