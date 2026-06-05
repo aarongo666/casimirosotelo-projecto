@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Envios y servios hasta tus manos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header>
+  <h1>Consultar envios</h1>
+
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="acerca.html">Acerca de</a>
+    <a href="servicios.html">Servicios</a>
+    <a href="envios.html" class="active">Envios</a>
+    <a href="contacto.html">Contacto</a>
+  </nav>
+
+</header>
+
+<section class="contenido">
+
+<p>Solicitud de envío</p>
+
+<input type="text" id="nombre" placeholder="Nombre del cliente">
+
+<input type="tel" id="telefono" placeholder="Teléfono">
+
+<textarea id="producto"
+placeholder="Descripción del producto">
+</textarea>
+
+<input type="text" id="origen"
+placeholder="Lugar de recogida">
+
+<input type="text" id="destino"
+placeholder="Lugar de entrega">
+
+<input type="number" id="km"
+placeholder="Kilómetros aproximados">
+
+<button onclick="calcular()">
+Calcular envío
+</button>
+
+<div class="factura" id="resultado">
+Aquí aparecerá la factura
+</div>
+
+</section>
+
+<script>
+
+function calcular(){
+
+let nombre =
+document.getElementById("nombre").value;
+
+let telefono =
+document.getElementById("telefono").value;
+
+let producto =
+document.getElementById("producto").value;
+
+let origen =
+document.getElementById("origen").value;
+
+let destino =
+document.getElementById("destino").value;
+
+let km =
+parseInt(document.getElementById("km").value);
+
+if(!nombre || !telefono || !producto
+|| !origen || !destino || !km){
+
+alert("Completa todos los datos");
+return;
+
+}
+
+let costo = 0;
+
+if(km >=1 && km <=5){
+costo = 150;
+}
+else if(km <=10){
+costo = 250;
+}
+else if(km <=20){
+costo = 400;
+}
+else{
+costo = 600;
+}
+
+let fecha =
+new Date().toLocaleDateString();
+
+let factura =
+Math.floor(Math.random()*10000);
+
+let gps =
+`https://www.google.com/maps/search/?api=1&query=${destino}`;
+
+let datos = `
+
+<h3>Factura #${factura}</h3>
+
+<p><b>Fecha:</b> ${fecha}</p>
+
+<p><b>Cliente:</b> ${nombre}</p>
+
+<p><b>Producto:</b> ${producto}</p>
+
+<p><b>Origen:</b> ${origen}</p>
+
+<p><b>Destino:</b> ${destino}</p>
+
+<p><b>Distancia:</b> ${km} km</p>
+
+<p><b>Total:</b> C${costo}</p>
+
+<a href="c${gps}" target="_blank">
+Ir a ubicación GPS 📍
+</a>
+
+`;
+
+document.getElementById("resultado").innerHTML
+= datos;
+
+let mensaje = `Ricovak Delivery 🚚%0A
+Factura: ${factura}%0A
+Cliente: ${nombre}%0A
+Producto: ${producto}%0A
+Origen: ${origen}%0A
+Destino: ${destino}%0A
+Kilómetros: ${km}%0A
+Costo: C${costo}`;
+
+let numero = "50589297460";
+
+window.open(
+`https://wa.me/${numero}?text=${mensaje}`,
+"_blank"
+);
+
+}
+
+</script>
+
+</section>
+
+<footer>
+  <p>© 2026  RICOGAAC Logisticas y Envios</p>
+</footer>
+
+</body>
+</html>
