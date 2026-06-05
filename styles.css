@@ -603,6 +603,52 @@ iframe {
     margin-bottom: 10px;
 }
 
+.envio-item {
+    background: #f0f4f8;
+    border-left: 4px solid var(--azul-principal);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--texto);
+}
+
+#lista-envios h2 {
+    margin-bottom: 16px;
+}
+
+/* ADMIN TABLE */
+
+.admin-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.admin-tabla th {
+    background: var(--azul-marino);
+    color: white;
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.admin-tabla td {
+    padding: 11px 14px;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+}
+
+.admin-tabla tbody tr:hover {
+    background: #f0f4f8;
+}
+
+.admin-tabla tbody tr:last-child td {
+    border-bottom: none;
+}
+
 /* TABLET BREAKPOINT */
 
 @media (max-width: 1024px) {

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel Administrativo — Ricovak</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header>
+  <h1>Panel Administrativo</h1>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="acerca.html">Acerca de</a>
+    <a href="servicios.html">Servicios</a>
+    <a href="envios.html">Envios</a>
+    <a href="contacto.html">Contacto</a>
+    <a href="admin.html" class="active">Admin</a>
+  </nav>
+</header>
+
+<!-- LOGIN PANEL -->
+<section class="contenido" id="panel-login">
+  <p>Acceso Administrativo</p>
+  <p style="font-size:15px;font-weight:400;color:#636e72;margin-top:-8px;">Ingresa la contraseña para continuar</p>
+  <input type="password" id="clave" placeholder="Contraseña" onkeydown="if(event.key==='Enter') verificar()">
+  <div id="error-login" style="color:#ED3C1A;font-size:14px;display:none;text-align:center;">Contraseña incorrecta.</div>
+  <button onclick="verificar()">Ingresar</button>
+</section>
+
+<!-- ADMIN CONTENT (hidden until authenticated) -->
+<section class="contenido" id="panel-admin" style="display:none;max-width:900px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+    <p style="margin:0;">Envíos Registrados</p>
+    <button onclick="cerrarSesion()" style="background:#636e72;padding:10px 20px;font-size:14px;">Cerrar sesión</button>
+  </div>
+  <div id="admin-lista"><p style="text-align:center;color:#636e72;">Cargando envíos...</p></div>
+</section>
+
+<footer>
+  <p>© 2026 RICOGAAC Logisticas y Envios</p>
+</footer>
+
+<script>
+const ADMIN_PASSWORD = "1234";
+
+function verificar() {
+  const clave = document.getElementById("clave").value;
+  const errorEl = document.getElementById("error-login");
+
+  if (clave === ADMIN_PASSWORD) {
+    sessionStorage.setItem("adminAuth", "true");
+    errorEl.style.display = "none";
+    mostrarAdmin();
+  } else {
+    errorEl.style.display = "block";
+    document.getElementById("clave").value = "";
+    document.getElementById("clave").focus();
+  }
+}
+
+function mostrarAdmin() {
+  document.getElementById("panel-login").style.display = "none";
+  document.getElementById("panel-admin").style.display = "flex";
+  cargarEnvios();
+}
+
+function cerrarSesion() {
+  sessionStorage.removeItem("adminAuth");
+  document.getElementById("panel-login").style.display = "flex";
+  document.getElementById("panel-admin").style.display = "none";
+  document.getElementById("clave").value = "";
+}
+
+async function cargarEnvios() {
+  const contenedor = document.getElementById("admin-lista");
+  try {
+    const res = await fetch("/api/envios", {
+      headers: { "x-admin-password": ADMIN_PASSWORD }
+    });
+
+    if (res.status === 401) {
+      cerrarSesion();
+      return;
+    }
+
+    const lista = await res.json();
+
+    if (!lista.length) {
+      contenedor.innerHTML = "<p style='text-align:center;color:#636e72;'>No hay envíos registrados aún.</p>";
+      return;
+    }
+
+    contenedor.innerHTML = `
+      <div style="overflow-x:auto;width:100%;">
+        <table class="admin-tabla">
+          <thead>
+            <tr>
+              <th>Factura</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Teléfono</th>
+              <th>Producto</th>
+              <th>Origen</th>
+              <th>Destino</th>
+              <th>Km</th>
+              <th>Costo</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map(e => `
+              <tr>
+                <td>#${e.factura}</td>
+                <td>${e.fecha}</td>
+                <td>${e.nombre}</td>
+                <td>${e.telefono}</td>
+                <td>${e.producto}</td>
+                <td>${e.origen}</td>
+                <td>${e.destino}</td>
+                <td>${e.km} km</td>
+                <td>C${e.costo}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:13px;color:#636e72;text-align:right;margin-top:8px;">${lista.length} envío(s) encontrado(s)</p>
+    `;
+  } catch (err) {
+    contenedor.innerHTML = "<p style='text-align:center;color:#ED3C1A;'>Error al cargar los datos.</p>";
+    console.error(err);
+  }
+}
+
+// Auto-login if session is still active
+window.addEventListener("DOMContentLoaded", () => {
+  if (sessionStorage.getItem("adminAuth") === "true") {
+    mostrarAdmin();
+  }
+});
+</script>
+
+</body>
+</html>
